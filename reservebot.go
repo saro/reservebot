@@ -23,6 +23,7 @@ var (
 	debug          bool
 	admins         string
 	reqResourceEnv bool
+	dbPath         string
 	pruneEnabled   bool
 	pruneInterval  int
 	pruneExpire    int
@@ -35,6 +36,7 @@ func main() {
 	flag.BoolVar(&debug, "debug", util.LookupEnvOrBool("DEBUG", false), "Debug mode")
 	flag.StringVar(&admins, "admins", util.LookupEnvOrString("SLACK_ADMINS", ""), "Turn on administrative commands for specific admins, comma separated list")
 	flag.BoolVar(&reqResourceEnv, "require-resource-env", util.LookupEnvOrBool("REQUIRE_RESOURCE_ENV", true), "Require resource reservation to include environment")
+	flag.StringVar(&dbPath, "db-path", util.LookupEnvOrString("DB_PATH", "reservebot.db"), "Path to sqlite database")
 	flag.BoolVar(&pruneEnabled, "prune-enabled", util.LookupEnvOrBool("PRUNE_ENABLED", true), "Enable pruning available resources automatically")
 	flag.IntVar(&pruneInterval, "prune-interval", util.LookupEnvOrInt("PRUNE_INTERVAL", 1), "Automatic pruning interval in hours")
 	flag.IntVar(&pruneExpire, "prune-expire", util.LookupEnvOrInt("PRUNE_EXPIRE", 168), "Automatic prune expiration time in hours")
@@ -52,7 +54,12 @@ func main() {
 
 	api := slack.New(token, slack.OptionDebug(debug))
 
-	data := data.NewMemory()
+	datastore, err := data.NewSqlite(dbPath)
+	if err != nil {
+		log.Errorf("Error opening database: %+v", err)
+		return
+	}
+	data := datastore
 
 	if pruneEnabled {
 		// Prune inactive resources

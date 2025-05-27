@@ -3,7 +3,7 @@ A Slackbot for reserving shared resources.
 
 # Features
 
-reservebot lets you and your team reserve shared resources and provides a queue for waiting for resources. Currently, reservebot stores reservations in memory so reservations will be lost on restart.
+reservebot lets you and your team reserve shared resources and provides a queue for waiting for resources. Reservations are now persisted to a local sqlite database so they survive restarts.
 
 # Running
 
@@ -29,7 +29,7 @@ $ ./reservebot -token "<YOUR_SLACK_TOKEN>" -challenge "<SLACK_VERIFICATION_TOKEN
 Then in Slack, set up "event subscriptions" for `<ngrok url from your terminal>/events`.
 
 ### Docker
-The docker run uses environment variables. The following are supported - `SLACK_TOKEN`, `SLACK_CHALLENGE`, `LISTEN_PORT`, `DEBUG`, `SLACK_ADMINS`, `REQUIRE_RESOURCE_ENV`, `PRUNE_ENABLED`, `PRUNE_INTERVAL`, `PRUNE_EXPIRE`.
+The docker run uses environment variables. The following are supported - `SLACK_TOKEN`, `SLACK_CHALLENGE`, `LISTEN_PORT`, `DEBUG`, `SLACK_ADMINS`, `REQUIRE_RESOURCE_ENV`, `PRUNE_ENABLED`, `PRUNE_INTERVAL`, `PRUNE_EXPIRE`, `DB_PATH`.
 
 Run docker as follows:
 ```
